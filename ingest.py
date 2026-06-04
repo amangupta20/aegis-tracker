@@ -22,19 +22,19 @@ for match in response.json():
     else:
         side = "Dire"
     if side == "Radiant":
-        if match["radiant_win"] == True:
+        if match["radiant_win"]:
             win = 1
         else:
             win = 0
     else:
-        if match["radiant_win"] == True:
+        if match["radiant_win"]:
             win = 0
         else:
             win = 1
 
     cursor.execute(
         """
-        INSERT INTO matches (match_id, win, hero_id, duration, kills, deaths, assists, hero_damage, tower_damage, gpm, xpm, last_hits, side)
+        INSERT OR IGNORE INTO matches (match_id, win, hero_id, duration, kills, deaths, assists, hero_damage, tower_damage, gpm, xpm, last_hits, side)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """,
         (
