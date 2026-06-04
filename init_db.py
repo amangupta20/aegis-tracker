@@ -152,7 +152,6 @@ CREATE TABLE IF NOT EXISTS matches (
     tower_damage INTEGER NOT NULL,
     gpm INTEGER NOT NULL,
     xpm INTEGER NOT NULL,
-    hero_healing INTEGER NOT NULL,
     last_hits INTEGER NOT NULL,
     side TEXT NOT NULL CHECK (side IN ('Radiant', 'Dire')),
     FOREIGN KEY (hero_id) REFERENCES heroes(id)
