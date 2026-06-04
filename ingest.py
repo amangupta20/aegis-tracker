@@ -8,15 +8,16 @@ load_dotenv()
 
 steam_id = os.getenv("STEAM_ID")
 
-url = f"https://api.opendota.com/api/players/{steam_id}/recentMatches"
+url = f"https://api.opendota.com/api/players/{steam_id}/matches?limit=200" ## /matches?limit=500 for specific number of matches but it doesnt give damage xpm,gpm while /recentmatches does
 
 response = requests.get(url)
 
 db = sqlite3.connect("stats.db")
 cursor = db.cursor()
 cursor.execute("PRAGMA foreign_keys = ON;")
-
 for match in response.json():
+    if match["game_mode"]!=22:
+        continue
     if match["player_slot"] < 128:
         side = "Radiant"
     else:
@@ -31,7 +32,7 @@ for match in response.json():
             win = 0
         else:
             win = 1
-
+    print(match["hero_id"])
     cursor.execute(
         """
         INSERT OR IGNORE INTO matches (match_id, win, hero_id, duration, kills, deaths, assists, hero_damage, tower_damage, gpm, xpm, last_hits, side)
@@ -45,11 +46,11 @@ for match in response.json():
             match["kills"],
             match["deaths"],
             match["assists"],
-            match["hero_damage"],
-            match["tower_damage"],
-            match["gold_per_min"],
-            match["xp_per_min"],
-            match["last_hits"],
+            match.get("hero_damage", None), # Returns None if unparsed
+            match.get("tower_damage", None),
+            match.get("gold_per_min", None),
+            match.get("xp_per_min", None),
+            match.get("last_hits", None),
             side,
         ),
     )
